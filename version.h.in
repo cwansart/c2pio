@@ -1,0 +1,5 @@
+#pragma once
+
+constexpr unsigned int VERSION_MAJOR = @c2pio_VERSION_MAJOR@;
+constexpr unsigned int VERSION_MINOR = @c2pio_VERSION_MINOR@;
+constexpr unsigned int VERSION_PATCH = @c2pio_VERSION_PATCH@;

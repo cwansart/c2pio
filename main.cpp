@@ -9,12 +9,17 @@
 
 #include "version.h"
 
-// TODO: https://ec.haxx.se/libcurl/performance.html
+// TODO: improve performance, see: https://ec.haxx.se/libcurl/performance.html
+// TODO: set buffer size according to the given file
+//       see: CURLOPT_BUFFERSIZE, CURL_MAX_READ_SIZE
+// TODO: add arg to enable verbosity, see: CURLOPT_VERBOSE
+// TODO: provide a way to add user certs: https://ec.haxx.se/transfers/options/tls.html
+// TODO: make out-file optional, use file name in url instead
+
 int main(int argc, char* argv[]) {
 
     if (argc < 2) {
         std::cerr << "Missing arguments!\n";
-        // TODO: make out-file optional, use file name in url instead
         std::cout << "Usage: " << argv[0] << " <url> <out-file>\n\n"
                   << "  <url>        url of file to download\n\n"
                   << "  <out-file>   path to save the file to\n";
@@ -44,19 +49,14 @@ int main(int argc, char* argv[]) {
     std::cout << "using curl version: " << curlVersionInfo->version << '\n'
               << "attempt to download " << url << '\n';
 
-    // curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, CURL_MAX_READ_SIZE);
-    // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-    // CURLOPT_DEBUGFUNCTION, see: https://ec.haxx.se/libcurl/verbose.html
-
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
     curl_easy_setopt(curl, CURLOPT_USERAGENT, agent.str().c_str());
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
     curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
-    curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
-    
     outFileFp = std::fopen(outFile.c_str(), "wb");
     if (outFileFp == NULL) {
         std::cerr << "failed to open file: " << std::strerror(errno) << '\n';
